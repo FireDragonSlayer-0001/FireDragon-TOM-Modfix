@@ -1,1 +1,1 @@
-
+- Added a mandatory agent requirement in `AGENTS.md` instructing all agents/Codex to append each major change to `Instructions/Done.txt` as an append-only log.
