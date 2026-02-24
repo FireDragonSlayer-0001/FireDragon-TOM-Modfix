@@ -37,6 +37,8 @@ jobs:
           cp -r programs "$BUNDLE_ROOT/$APP_DIR/programs"
           cp Readme.txt Launch.bat Setup.bat config.json "$BUNDLE_ROOT/$APP_DIR/"
 
+          rm -f "$BUNDLE_ROOT/$APP_DIR/Source/.gitkeep" "$BUNDLE_ROOT/$APP_DIR/Output/.gitkeep"
+
           cd "$BUNDLE_ROOT"
           zip -r "../$ZIP_NAME" "$APP_DIR"
 
