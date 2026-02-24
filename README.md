@@ -29,11 +29,8 @@ Direct raw URL:
    - `Source/`
    - `Output/`
    - `programs/`
-   - `Run Program.bat`
+   - `Setup.bat`
 
 ### Run the workflow
-- Windows: double-click `Run Program.bat`
-- Terminal: run
-  ```bash
-  python First.py
-  ```
+- Windows: double-click `Setup.bat` and follow each confirmation prompt.
+- The batch flow explains each step and asks for input before it continues.
