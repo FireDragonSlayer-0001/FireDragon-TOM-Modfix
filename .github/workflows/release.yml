@@ -1,0 +1,38 @@
+name: Release Portable Setup
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  build-release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Prepare release bundle
+        run: |
+          set -euo pipefail
+          BUNDLE_DIR="release-bundle/FireDragon-TOM-Modfix-Setup"
+          mkdir -p "$BUNDLE_DIR"
+          cp -r Source "$BUNDLE_DIR/Source"
+          cp -r Output "$BUNDLE_DIR/Output"
+          cp -r programs "$BUNDLE_DIR/programs"
+          cp Readme.txt Launch.bat Setup.bat config.json "$BUNDLE_DIR/"
+
+      - name: Create zip asset
+        run: |
+          set -euo pipefail
+          cd release-bundle
+          zip -r ../FireDragon-TOM-Modfix-Setup.zip FireDragon-TOM-Modfix-Setup
+
+      - name: Create GitHub release and upload asset
+        uses: softprops/action-gh-release@v2
+        with:
+          files: FireDragon-TOM-Modfix-Setup.zip

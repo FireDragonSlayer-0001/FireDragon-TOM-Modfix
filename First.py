@@ -1,30 +1,25 @@
 from pathlib import Path
 import shutil
 
-# Config start
-# put the mods into source, the script will put output into the output folder
-SOURCE_ROOT = Path(r"S:\tale of immortal mod structure bugfix\BrokenMods")
-OUTPUT_ROOT = Path(r"S:\tale of immortal mod structure bugfix\FixedMods")
-# Example: 
-# SOURCE_ROOT = Path(r"S:\tale of immortal mod structure bugfix\BrokenMods")
-# OUTPUT_ROOT = Path(r"S:\tale of immortal mod structure bugfix\FixedMods")
+from programs.shared_config import load_config
 
-# these are for marking what the script checks for, the stuff inside { } is what the script checks for, its a TYPE ALL, so if a mod has both the modproject and debug, then its flagged as the bugged folder, if it only has one, the script fails to fix them
+# Config start
+CONFIG = load_config(Path(__file__).resolve().parent / "config.json")
+SOURCE_ROOT = Path(__file__).resolve().parent / CONFIG.get("source_folder", "Source")
+OUTPUT_ROOT = Path(__file__).resolve().parent / CONFIG.get("output_folder", "Output")
+
+# these are for marking what the script checks for, the stuff inside { } is what the script checks for, its a TYPE ALL
 BUGGED_MARKERS = {"ModProject", "debug"}
 
-# this is where the script extracts the proper file structure from, i chose ModProject for this
+# this is where the script extracts the proper file structure from
 NESTED_PAYLOAD_FOLDER = "debug"
 
-# False means that it copies and pastes the fixed mods, leaving the source intact, set to True if you want the script to cut and move instead, leaves source folder broken
-DO_MOVE = False
-
-# will overwrite the output folder if there are already mods in there that have same structure, set to false if you dont want it to overwrite
-OVERWRITE_FILES = True
+DO_MOVE = bool(CONFIG.get("do_move", False))
+OVERWRITE_FILES = bool(CONFIG.get("overwrite_files", True))
 # Config End
 
 
 def transfer_item(src: Path, dst: Path, do_move: bool):
-    """Copy/move one file or folder from src to dst."""
     if src.is_dir():
         if do_move:
             dst.mkdir(parents=True, exist_ok=True)
@@ -51,7 +46,6 @@ def transfer_item(src: Path, dst: Path, do_move: bool):
 
 
 def transfer_contents(src_dir: Path, dst_dir: Path, do_move: bool):
-    """Copy/move all contents of src_dir into dst_dir (not the folder itself)."""
     dst_dir.mkdir(parents=True, exist_ok=True)
     for item in src_dir.iterdir():
         transfer_item(item, dst_dir / item.name, do_move)

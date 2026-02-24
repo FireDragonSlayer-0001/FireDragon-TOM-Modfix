@@ -13,6 +13,8 @@ import re
 import string
 from pathlib import Path
 
+from shared_config import load_config, root_from_config
+
 MOD_PREFIX = "Mod_"
 SUFFIX_RE = re.compile(r"^(?P<base>.+)_([A-Za-z0-9]{5})$")
 ALNUM = string.ascii_letters + string.digits
@@ -81,13 +83,19 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description="Rename duplicate Mod_* folders by appending random 5-char alnum suffixes."
     )
-    parser.add_argument("output_root", type=Path, help="Path to output root directory.")
+    parser.add_argument("output_root", type=Path, nargs="?", help="Path to output root directory.")
+    parser.add_argument("--config", type=Path, default=Path("config.json"), help="Path to shared config file.")
     return parser.parse_args()
 
 
 def main() -> int:
     args = parse_args()
-    return scan_output(args.output_root)
+    if args.output_root is not None:
+        output_root = args.output_root
+    else:
+        config = load_config(args.config)
+        output_root = root_from_config(args.config) / config.get("output_folder", "Output")
+    return scan_output(output_root)
 
 
 if __name__ == "__main__":
