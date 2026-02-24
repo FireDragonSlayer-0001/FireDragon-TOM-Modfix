@@ -32,14 +32,25 @@ jobs:
           rm -rf "$BUNDLE_ROOT" "$ZIP_NAME"
           mkdir -p "$BUNDLE_ROOT/$APP_DIR"
 
-          cp -r Source "$BUNDLE_ROOT/$APP_DIR/Source"
-          cp -r Output "$BUNDLE_ROOT/$APP_DIR/Output"
-          cp -r 'Alternative Output' "$BUNDLE_ROOT/$APP_DIR/Alternative Output"
-          cp -r Logs "$BUNDLE_ROOT/$APP_DIR/Logs"
+          mkdir -p "$BUNDLE_ROOT/$APP_DIR/Source" \
+                   "$BUNDLE_ROOT/$APP_DIR/Output" \
+                   "$BUNDLE_ROOT/$APP_DIR/Alternative Output" \
+                   "$BUNDLE_ROOT/$APP_DIR/Logs" \
+                   "$BUNDLE_ROOT/$APP_DIR/Manual Fixing Required"
+
+          cp -r Source/. "$BUNDLE_ROOT/$APP_DIR/Source/"
+          cp -r Output/. "$BUNDLE_ROOT/$APP_DIR/Output/"
+          cp -r 'Alternative Output'/. "$BUNDLE_ROOT/$APP_DIR/Alternative Output/"
+          cp -r Logs/. "$BUNDLE_ROOT/$APP_DIR/Logs/"
+          cp -r 'Manual Fixing Required'/. "$BUNDLE_ROOT/$APP_DIR/Manual Fixing Required/"
           cp -r programs "$BUNDLE_ROOT/$APP_DIR/programs"
           cp Readme.txt Launch.bat Launch_AlternativeOutput.bat Launch_Replace.bat Setup.bat config.json "$BUNDLE_ROOT/$APP_DIR/"
 
-          rm -f "$BUNDLE_ROOT/$APP_DIR/Source/.gitkeep" "$BUNDLE_ROOT/$APP_DIR/Output/.gitkeep" "$BUNDLE_ROOT/$APP_DIR/Alternative Output/.gitkeep" "$BUNDLE_ROOT/$APP_DIR/Logs/.gitkeep"
+          rm -f "$BUNDLE_ROOT/$APP_DIR/Source/.gitkeep" \
+                "$BUNDLE_ROOT/$APP_DIR/Output/.gitkeep" \
+                "$BUNDLE_ROOT/$APP_DIR/Alternative Output/.gitkeep" \
+                "$BUNDLE_ROOT/$APP_DIR/Logs/.gitkeep" \
+                "$BUNDLE_ROOT/$APP_DIR/Manual Fixing Required/.gitkeep"
 
           cd "$BUNDLE_ROOT"
           zip -r "../$ZIP_NAME" "$APP_DIR"
