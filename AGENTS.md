@@ -12,3 +12,4 @@ This is an append-only change log for agents (including AI agents and Codex).
 - A root-level folder named `temp-dev/` is available for placeholder/testing files.
 - If a task is applicable to the repository programs, use files in `temp-dev/` as needed and verify the related program flow runs smoothly.
 - If a task does not involve repository programs (for example: updating docs like `README`/`AGENTS.md`), program execution is optional and does not need to be run.
+- Never modify folders or files inside `temp-dev/`, except for `temp-dev/.gitkeep`.
