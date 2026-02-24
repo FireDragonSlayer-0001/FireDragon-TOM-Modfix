@@ -15,3 +15,4 @@
 - Updated release workflow to publish only via manual dispatch by the repository owner using a required release_tag input.
 - Added programs/flatten_single_nested_mod_folder.py to flatten output subfolders when their only child is a nested Mod_* directory by moving contents up and removing the empty nested folder, and wired Setup.bat to verify/update this helper.
 - Updated Launch.bat/config defaults to run the flatten helper automatically after extraction so nested single Mod_* folders are pushed up into each output mod folder.
+- Updated release packaging workflow to remove Source/.gitkeep and Output/.gitkeep from generated setup zip bundles.
