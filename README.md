@@ -36,12 +36,42 @@ The release zip already includes:
 
 ## Configuration
 
-Edit `config.json` to customize paths and behavior:
-- `source_folder`
-- `shippable_output_dir` (preferred normal final output path)
-- `output_folder` (legacy/backward-compatible output path key)
-- `alternative_output_dir`
-- `replace_directory`
+Edit `config.json` to customize behavior and paths.
+
+### Most important settings (set these first)
+
+- `source_folder`  
+  Folder where you place broken mods before running the tool.
+- `shippable_output_dir`  
+  Main final output path for fixed mods in the normal `Launch.bat` flow.
+- `manual_fixing_required_dir`  
+  Folder where mods are moved when automation cannot safely fix them.
+- `enable_alternative_output` (default: `false`)  
+  Turns on the optional alternative-output pipeline used to isolate broken/problem mods.
+- `alternative_output_dir`  
+  Destination folder used by the alternative-output workflow.
+- `enable_safe_replace` (default: `false`)  
+  Enables safe replacement logic so only matching existing folders are replaced.
+- `replace_directory`  
+  Target game/mod directory that safe replace checks against.
+- `replace_dry_run` (default: `true`)  
+  Preview mode for safe replace; shows what would change without applying writes.
+- `replace_backup_enabled` (default: `false`)  
+  Creates backups during safe replace when enabled.
+
+### General/advanced config options
+
+- `do_move`  
+  Controls whether extracted items are moved instead of copied during processing.
+- `overwrite_files`  
+  Allows overwriting existing files where workflows support it.
+- `auto_update_tools`  
+  Lets setup/update flows refresh helper scripts from the repository source.
+
+### Base directory and script path keys (usually keep defaults)
+
+- `output_folder`  
+  Legacy/backward-compatible output path key.
 - `programs_folder`
 - `main_script`
 - `flatten_script`
@@ -49,14 +79,6 @@ Edit `config.json` to customize paths and behavior:
 - `validate_script`
 - `alternative_builder_script`
 - `safe_replace_script`
-- `manual_fixing_required_dir`
-- `auto_update_tools`
-- `do_move`
-- `overwrite_files`
-- `enable_alternative_output` (default: `false`)
-- `enable_safe_replace` (default: `false`)
-- `replace_dry_run` (default: `true`)
-- `replace_backup_enabled` (default: `false`)
 
 All Python scripts in `programs\` read this same shared config.
 
