@@ -145,7 +145,9 @@ def main() -> int:
     root = root_from_config(args.config)
 
     source_root = args.source_root or (root / config.get("source_folder", "Source"))
-    output_root = args.output_root or (root / config.get("output_folder", "Output"))
+    output_root = args.output_root or (
+        root / config.get("shippable_output_dir", config.get("output_folder", "Output"))
+    )
 
     do_move = args.move if args.move else bool(config.get("do_move", False))
     overwrite_files = (not args.no_overwrite) and bool(config.get("overwrite_files", True))
