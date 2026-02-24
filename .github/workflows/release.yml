@@ -1,20 +1,18 @@
 name: Build and Publish Release
 
 on:
-  push:
-    branches:
-      - main
-      - work
-    tags:
-      - 'v*.*.*'
-  pull_request:
   workflow_dispatch:
+    inputs:
+      release_tag:
+        description: 'Semantic version tag to release (for example: v1.2.3)'
+        required: true
 
 permissions:
   contents: write
 
 jobs:
   release:
+    if: github.actor == github.repository_owner
     runs-on: ubuntu-latest
 
     steps:
@@ -23,7 +21,7 @@ jobs:
 
       - name: Build portable release bundle
         env:
-          RELEASE_TAG: ${{ github.ref_name }}
+          RELEASE_TAG: ${{ github.event.inputs.release_tag }}
         run: |
           set -euo pipefail
 
@@ -43,10 +41,10 @@ jobs:
           zip -r "../$ZIP_NAME" "$APP_DIR"
 
       - name: Publish GitHub release
-        if: startsWith(github.ref, 'refs/tags/v')
         uses: softprops/action-gh-release@v2
         with:
-          name: Release ${{ github.ref_name }}
+          tag_name: ${{ github.event.inputs.release_tag }}
+          name: Release ${{ github.event.inputs.release_tag }}
           generate_release_notes: true
           make_latest: true
-          files: FireDragon-TOM-Modfix-Setup-${{ github.ref_name }}.zip
+          files: FireDragon-TOM-Modfix-Setup-${{ github.event.inputs.release_tag }}.zip
