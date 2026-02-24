@@ -36,3 +36,9 @@ Edit `config.json` to customize paths and behavior:
 
 All Python scripts in `programs\` read this same shared config.
 
+
+## Maintainer release flow
+
+1. Commit your changes to `main`.
+2. Create and push a semantic version tag (example: `v0.1.0`).
+3. The `Build and Publish Release` workflow builds and uploads `FireDragon-TOM-Modfix-Setup-<tag>.zip` to a GitHub Release.
