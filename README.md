@@ -2,6 +2,10 @@
 
 FireDragonSlayer's Tale Of Immortal Mod structure fix.
 
+<span style="color:red"><strong>WARNING 1:</strong> if you are using the "organized translation pack v1.1.rar" then apply it to the mods before you run them through this tool.</span>
+
+WARNING 2: This tool is in BETA testing phase, make a backup of the mods that you have before you run this with the alternative setting in config enabled.
+
 ## Quick start (recommended)
 
 1. Go to the repository **Releases** page.
