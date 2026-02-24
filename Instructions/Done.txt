@@ -8,3 +8,5 @@
 - Migrated project to pre-bundled portable release layout with shared config-driven Setup/Launch flows, config-aware Python scripts, and tag-triggered GitHub Release zip packaging workflow.
 - Updated .gitignore to ignore instructions/temp-dev folders and lowercase agents.md/readme.md files as requested.
 - Removed deprecated root scripts `First.py` and `initilization.py`, and updated docs/script comments to reflect programs/ as the active workflow.
+- Hardened Launch.bat Python detection to support both `py -3` and `python` and fail fast with clear guidance when Python is missing.
+- Corrected duplicate Mod_ rename logic to compare exact suffixes after `Mod_` across output and rename duplicates by replacing that suffix with a new random 5-character alnum value.
