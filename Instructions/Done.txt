@@ -3,3 +3,4 @@
 - Created root-level temp-dev/ folder for placeholder/testing files and updated AGENTS.md with guidance on when to run repository programs.
 - Updated `AGENTS.md` to explicitly forbid modifying files/folders inside `temp-dev/` except `temp-dev/.gitkeep`.
 - Updated initilization flow to create Source/Output/programs, create README and Run Program.bat, download helper scripts into programs, and documented release v0.1.
+- Removed `RELEASE.md` and `README.txt`, and updated `README.md` with `initilization.py` download plus install/setup instructions.
