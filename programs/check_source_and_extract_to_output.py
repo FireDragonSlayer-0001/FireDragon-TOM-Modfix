@@ -11,6 +11,7 @@ import argparse
 import shutil
 from pathlib import Path
 
+from run_logging import ProgramLogger
 from shared_config import load_config, root_from_config
 
 
@@ -58,8 +59,10 @@ def is_bugged_mod_folder(mod_folder: Path) -> bool:
 
 
 def run(source_root: Path, output_root: Path, do_move: bool, overwrite_files: bool) -> int:
+    logger = ProgramLogger("01_extract")
     if not source_root.exists() or not source_root.is_dir():
-        print(f"[ERROR] source root does not exist or is not a folder: {source_root}")
+        logger.detail(f"[ERROR] source root does not exist or is not a folder: {source_root}")
+        logger.main_summary("failed: source root missing/invalid")
         return 1
 
     output_root.mkdir(parents=True, exist_ok=True)
@@ -68,6 +71,10 @@ def run(source_root: Path, output_root: Path, do_move: bool, overwrite_files: bo
     fixed = 0
     normal = 0
     skipped = 0
+
+    fixed_mods: list[str] = []
+    normal_mods: list[str] = []
+    skipped_mods: list[str] = []
 
     for mod_folder in source_root.iterdir():
         if not mod_folder.is_dir():
@@ -81,27 +88,40 @@ def run(source_root: Path, output_root: Path, do_move: bool, overwrite_files: bo
             if is_bugged_mod_folder(mod_folder):
                 nested = mod_folder / NESTED_PAYLOAD_FOLDER
                 if nested.exists() and nested.is_dir():
-                    print(f"[FIX ] {mod_folder.name} -> extracting contents of '{NESTED_PAYLOAD_FOLDER}'")
+                    logger.detail(f"[FIX ] {mod_folder.name} -> extracting contents of '{NESTED_PAYLOAD_FOLDER}'")
                     transfer_contents(nested, out_mod_folder, do_move, overwrite_files)
                     fixed += 1
+                    fixed_mods.append(mod_folder.name)
                 else:
-                    print(f"[WARN] {mod_folder.name} has bug markers but missing '{NESTED_PAYLOAD_FOLDER}'")
+                    logger.detail(f"[WARN] {mod_folder.name} has bug markers but missing '{NESTED_PAYLOAD_FOLDER}'")
                     skipped += 1
+                    skipped_mods.append(mod_folder.name)
             else:
-                print(f"[COPY] {mod_folder.name} -> already normal (or not matching bug markers)")
+                logger.detail(f"[COPY] {mod_folder.name} -> already normal (or not matching bug markers)")
                 transfer_contents(mod_folder, out_mod_folder, do_move, overwrite_files)
                 normal += 1
+                normal_mods.append(mod_folder.name)
         except Exception as exc:
-            print(f"[ERR ] {mod_folder.name}: {exc}")
+            logger.detail(f"[ERR ] {mod_folder.name}: {exc}")
             skipped += 1
+            skipped_mods.append(mod_folder.name)
 
     mode = "MOVE" if do_move else "COPY"
-    print("\n=== DONE ===")
-    print(f"Mode: {mode}")
-    print(f"Total mod folders: {total}")
-    print(f"Fixed bugged folders: {fixed}")
-    print(f"Normal copied folders: {normal}")
-    print(f"Skipped/errors: {skipped}")
+    logger.detail("\n=== DONE ===")
+    logger.detail(f"Mode: {mode}")
+    logger.detail(f"Total mod folders: {total}")
+    logger.detail(f"Fixed bugged folders: {fixed}")
+    logger.detail(f"Normal copied folders: {normal}")
+    logger.detail(f"Skipped/errors: {skipped}")
+    logger.main_summary(f"mode={mode}, total={total}, fixed={fixed}, normal={normal}, skipped={skipped}")
+    logger.detail_summary(
+        "Per-mod extraction outcome",
+        {
+            "Fixed bugged folders": fixed_mods,
+            "Normal copied folders": normal_mods,
+            "Skipped/error folders": skipped_mods,
+        },
+    )
     return 0
 
 

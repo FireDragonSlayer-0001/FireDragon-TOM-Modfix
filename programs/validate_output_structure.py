@@ -11,6 +11,7 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 
+from run_logging import ProgramLogger
 from shared_config import load_config, root_from_config
 
 BUGGED_MARKERS = {"ModProject", "debug"}
@@ -22,12 +23,18 @@ def has_bugged_structure(folder: Path) -> bool:
 
 
 def validate_output(output_root: Path) -> int:
+    logger = ProgramLogger("03_validate")
+
     if not output_root.exists() or not output_root.is_dir():
-        print(f"[ERROR] output root does not exist or is not a folder: {output_root}")
+        logger.detail(f"[ERROR] output root does not exist or is not a folder: {output_root}")
+        logger.main_summary("failed: output root missing/invalid")
         return 1
 
     checked = 0
     invalid = 0
+
+    valid_mods: list[str] = []
+    invalid_mods: list[str] = []
 
     for mod_folder in output_root.iterdir():
         if not mod_folder.is_dir():
@@ -35,17 +42,27 @@ def validate_output(output_root: Path) -> int:
 
         checked += 1
         if has_bugged_structure(mod_folder):
-            print(
+            logger.detail(
                 f"[BAD ] {mod_folder.name}: still contains both '{sorted(BUGGED_MARKERS)[0]}' "
                 f"and '{sorted(BUGGED_MARKERS)[1]}'"
             )
             invalid += 1
+            invalid_mods.append(mod_folder.name)
         else:
-            print(f"[OK  ] {mod_folder.name}")
+            logger.detail(f"[OK  ] {mod_folder.name}")
+            valid_mods.append(mod_folder.name)
 
-    print("\n=== DONE ===")
-    print(f"Checked folders: {checked}")
-    print(f"Invalid folders: {invalid}")
+    logger.detail("\n=== DONE ===")
+    logger.detail(f"Checked folders: {checked}")
+    logger.detail(f"Invalid folders: {invalid}")
+    logger.main_summary(f"checked={checked}, invalid={invalid}, valid={len(valid_mods)}")
+    logger.detail_summary(
+        "Output validation outcome",
+        {
+            "Valid output folders": valid_mods,
+            "Invalid output folders": invalid_mods,
+        },
+    )
     return 0 if invalid == 0 else 2
 
 
