@@ -30,6 +30,7 @@ Edit `config.json` to customize paths and behavior:
 - `output_folder`
 - `programs_folder`
 - `main_script`
+- `flatten_script`
 - `auto_update_tools`
 - `do_move`
 - `overwrite_files`

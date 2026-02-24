@@ -7,3 +7,5 @@ FireDragon TOM Modfix (Portable)
 
 Configuration:
 - Edit config.json to change Source/Output/program paths and update behavior.
+
+- Optional: set flatten_script in config.json to control post-processing flatten step.
