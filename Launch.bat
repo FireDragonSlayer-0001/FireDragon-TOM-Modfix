@@ -72,18 +72,6 @@ if errorlevel 1 (
     exit /b 1
 )
 
-if exist "%RENAME_SCRIPT%" (
-    echo [RUN ] %PYTHON_CMD% "%RENAME_SCRIPT%"
-    %PYTHON_CMD% "%RENAME_SCRIPT%" "%OUTPUT_FOLDER%"
-    if errorlevel 1 (
-        echo [ERROR] Rename workflow failed.
-        pause
-        exit /b 1
-    )
-) else (
-    echo [WARN] Rename script not found, skipping: %RENAME_SCRIPT%
-)
-
 if exist "%FLATTEN_SCRIPT%" (
     echo [RUN ] %PYTHON_CMD% "%FLATTEN_SCRIPT%"
     %PYTHON_CMD% "%FLATTEN_SCRIPT%" "%OUTPUT_FOLDER%"
@@ -94,6 +82,18 @@ if exist "%FLATTEN_SCRIPT%" (
     )
 ) else (
     echo [WARN] Flatten script not found, skipping: %FLATTEN_SCRIPT%
+)
+
+if exist "%RENAME_SCRIPT%" (
+    echo [RUN ] %PYTHON_CMD% "%RENAME_SCRIPT%"
+    %PYTHON_CMD% "%RENAME_SCRIPT%" "%OUTPUT_FOLDER%"
+    if errorlevel 1 (
+        echo [ERROR] Rename workflow failed.
+        pause
+        exit /b 1
+    )
+) else (
+    echo [WARN] Rename script not found, skipping: %RENAME_SCRIPT%
 )
 
 if exist "%VALIDATE_SCRIPT%" (
