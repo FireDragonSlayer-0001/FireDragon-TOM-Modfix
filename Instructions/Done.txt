@@ -13,3 +13,4 @@
 - Added a semantic-version tag workflow that packages the portable setup as a versioned zip and automatically publishes GitHub Releases.
 - Updated the release workflow triggers so CI runs on branch pushes/PRs/manual dispatch and only publishes GitHub Releases for semantic version tags (v*.*.*).
 - Updated release workflow to publish only via manual dispatch by the repository owner using a required release_tag input.
+- Added programs/flatten_single_nested_mod_folder.py to flatten output subfolders when their only child is a nested Mod_* directory by moving contents up and removing the empty nested folder, and wired Setup.bat to verify/update this helper.
