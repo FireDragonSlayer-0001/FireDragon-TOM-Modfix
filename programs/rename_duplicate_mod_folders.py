@@ -1,22 +1,22 @@
 """Task 2:
-Find duplicate Mod_* folders under output and rename extra copies with a random suffix.
+Find duplicate `Mod_` folders under output and rename extra copies.
 
-Duplicate detection is done inside each parent directory. If multiple folders share the same
-base name after stripping a trailing `_<5 alnum chars>` suffix, all but the first are renamed.
+Rules:
+- `Mod_` is a fixed prefix and is never changed.
+- Duplicate comparison is based on the exact suffix after `Mod_` across the output tree.
+- If duplicates are found, all but the first are renamed to `Mod_<random 5 alnum chars>`.
 """
 
 from __future__ import annotations
 
 import argparse
 import random
-import re
 import string
 from pathlib import Path
 
 from shared_config import load_config, root_from_config
 
 MOD_PREFIX = "Mod_"
-SUFFIX_RE = re.compile(r"^(?P<base>.+)_([A-Za-z0-9]{5})$")
 ALNUM = string.ascii_letters + string.digits
 
 
@@ -24,39 +24,32 @@ def random_suffix(length: int = 5) -> str:
     return "".join(random.choices(ALNUM, k=length))
 
 
-def normalized_key(name: str) -> str:
-    if not name.startswith(MOD_PREFIX):
-        return name
-
-    match = SUFFIX_RE.match(name)
-    if not match:
-        return name
-
-    return match.group("base")
+def suffix_after_prefix(name: str) -> str:
+    return name[len(MOD_PREFIX) :]
 
 
 def unique_renamed_path(folder: Path) -> Path:
-    base_name = folder.name
     while True:
-        candidate = folder.with_name(f"{base_name}_{random_suffix(5)}")
+        candidate = folder.with_name(f"{MOD_PREFIX}{random_suffix(5)}")
         if not candidate.exists():
             return candidate
 
 
-def rename_duplicates_in_parent(parent: Path) -> int:
+def rename_duplicates_in_output(output_root: Path) -> int:
     renamed = 0
     groups: dict[str, list[Path]] = {}
 
-    for child in parent.iterdir():
+    mod_folders = [output_root, *output_root.rglob("*")]
+    for child in mod_folders:
         if child.is_dir() and child.name.startswith(MOD_PREFIX):
-            key = normalized_key(child.name)
+            key = suffix_after_prefix(child.name)
             groups.setdefault(key, []).append(child)
 
     for _, folders in groups.items():
         if len(folders) < 2:
             continue
 
-        folders.sort(key=lambda p: p.name)
+        folders.sort(key=lambda p: str(p))
         for duplicate in folders[1:]:
             new_path = unique_renamed_path(duplicate)
             duplicate.rename(new_path)
@@ -71,9 +64,7 @@ def scan_output(output_root: Path) -> int:
         print(f"[ERROR] output root does not exist or is not a folder: {output_root}")
         return 1
 
-    total_renamed = 0
-    for parent in [output_root, *[p for p in output_root.rglob("*") if p.is_dir()]]:
-        total_renamed += rename_duplicates_in_parent(parent)
+    total_renamed = rename_duplicates_in_output(output_root)
 
     print(f"\n=== DONE ===\nTotal renamed folders: {total_renamed}")
     return 0
@@ -81,7 +72,7 @@ def scan_output(output_root: Path) -> int:
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Rename duplicate Mod_* folders by appending random 5-char alnum suffixes."
+        description="Rename duplicate Mod_ folders by replacing duplicate suffixes with random 5-char alnum values."
     )
     parser.add_argument("output_root", type=Path, nargs="?", help="Path to output root directory.")
     parser.add_argument("--config", type=Path, default=Path("config.json"), help="Path to shared config file.")
