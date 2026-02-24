@@ -13,6 +13,7 @@ import argparse
 import shutil
 from pathlib import Path
 
+from run_logging import ProgramLogger
 from shared_config import load_config, root_from_config
 
 MOD_PREFIX = "Mod_"
@@ -36,14 +37,20 @@ def move_contents_up(nested_mod_folder: Path, parent_folder: Path) -> tuple[int,
 
 
 def flatten_output(output_root: Path) -> int:
+    logger = ProgramLogger("04_flatten")
+
     if not output_root.exists() or not output_root.is_dir():
-        print(f"[ERROR] output root does not exist or is not a folder: {output_root}")
+        logger.detail(f"[ERROR] output root does not exist or is not a folder: {output_root}")
+        logger.main_summary("failed: output root missing/invalid")
         return 1
 
     checked = 0
     flattened = 0
     moved_items = 0
     skipped_items = 0
+
+    flattened_mods: list[str] = []
+    skipped_mods: list[str] = []
 
     for folder in output_root.iterdir():
         if not folder.is_dir():
@@ -52,15 +59,17 @@ def flatten_output(output_root: Path) -> int:
         checked += 1
         children = list(folder.iterdir())
         if len(children) != 1:
-            print(f"[SKIP] {folder.name}: expected exactly 1 child, found {len(children)}")
+            logger.detail(f"[SKIP] {folder.name}: expected exactly 1 child, found {len(children)}")
+            skipped_mods.append(folder.name)
             continue
 
         nested = children[0]
         if not nested.is_dir() or not nested.name.startswith(MOD_PREFIX):
-            print(f"[SKIP] {folder.name}: only child is not a '{MOD_PREFIX}*' folder")
+            logger.detail(f"[SKIP] {folder.name}: only child is not a '{MOD_PREFIX}*' folder")
+            skipped_mods.append(folder.name)
             continue
 
-        print(f"[FIX ] {folder.name}: flattening nested folder '{nested.name}'")
+        logger.detail(f"[FIX ] {folder.name}: flattening nested folder '{nested.name}'")
         moved, skipped = move_contents_up(nested, folder)
         moved_items += moved
         skipped_items += skipped
@@ -68,14 +77,26 @@ def flatten_output(output_root: Path) -> int:
         if not any(nested.iterdir()):
             nested.rmdir()
             flattened += 1
+            flattened_mods.append(folder.name)
         else:
-            print(f"  [WARN] Nested folder not empty, not removed: {nested}")
+            logger.detail(f"  [WARN] Nested folder not empty, not removed: {nested}")
+            skipped_mods.append(folder.name)
 
-    print("\n=== DONE ===")
-    print(f"Checked folders: {checked}")
-    print(f"Flattened folders: {flattened}")
-    print(f"Moved items: {moved_items}")
-    print(f"Skipped items: {skipped_items}")
+    logger.detail("\n=== DONE ===")
+    logger.detail(f"Checked folders: {checked}")
+    logger.detail(f"Flattened folders: {flattened}")
+    logger.detail(f"Moved items: {moved_items}")
+    logger.detail(f"Skipped items: {skipped_items}")
+    logger.main_summary(
+        f"checked={checked}, flattened={flattened}, moved_items={moved_items}, skipped_items={skipped_items}"
+    )
+    logger.detail_summary(
+        "Per-mod flatten outcome",
+        {
+            "Flattened folders": flattened_mods,
+            "Skipped/unchanged folders": skipped_mods,
+        },
+    )
     return 0
 
 

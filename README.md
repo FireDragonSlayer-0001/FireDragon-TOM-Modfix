@@ -18,6 +18,7 @@ The release zip already includes:
 - `Source\`
 - `Output\`
 - `programs\`
+- `Logs\`
 - `Readme.txt`
 - `Launch.bat`
 - `Setup.bat`
@@ -31,6 +32,8 @@ Edit `config.json` to customize paths and behavior:
 - `programs_folder`
 - `main_script`
 - `flatten_script`
+- `rename_script`
+- `validate_script`
 - `auto_update_tools`
 - `do_move`
 - `overwrite_files`

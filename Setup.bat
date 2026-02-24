@@ -44,7 +44,7 @@ echo [INFO] Source folder: %SOURCE_FOLDER%
 echo [INFO] Output folder: %OUTPUT_FOLDER%
 echo [INFO] Programs folder: %PROGRAMS_FOLDER%
 
-for %%D in ("%SOURCE_FOLDER%" "%OUTPUT_FOLDER%" "%PROGRAMS_FOLDER%") do (
+for %%D in ("%SOURCE_FOLDER%" "%OUTPUT_FOLDER%" "%PROGRAMS_FOLDER%" "Logs") do (
     if not exist %%~D (
         mkdir %%~D
         echo [FIX ] Created missing folder: %%~D
@@ -62,7 +62,7 @@ for %%F in ("Readme.txt" "Launch.bat" "Setup.bat" "config.json") do (
     )
 )
 
-for %%P in ("check_source_and_extract_to_output.py" "rename_duplicate_mod_folders.py" "validate_output_structure.py" "flatten_single_nested_mod_folder.py") do (
+for %%P in ("check_source_and_extract_to_output.py" "rename_duplicate_mod_folders.py" "validate_output_structure.py" "flatten_single_nested_mod_folder.py" "run_logging.py") do (
     if not exist "%PROGRAMS_FOLDER%\%%~P" (
         echo [ERROR] Missing required helper: %PROGRAMS_FOLDER%\%%~P
         set "HAS_ERROR=1"
@@ -78,7 +78,7 @@ goto :finish
 
 :update_tools
 echo [INFO] auto_update_tools enabled. Refreshing helper scripts from GitHub...
-powershell -NoProfile -ExecutionPolicy Bypass -Command "& { $ErrorActionPreference='Stop'; $base='https://raw.githubusercontent.com/FireDragonSlayer/FireDragon-TOM-Modfix/main/programs'; $files=@('check_source_and_extract_to_output.py','rename_duplicate_mod_folders.py','validate_output_structure.py','flatten_single_nested_mod_folder.py'); foreach ($file in $files) { Invoke-WebRequest -Uri ($base + '/' + $file) -OutFile (Join-Path '%PROGRAMS_FOLDER%' $file); Write-Host ('[OK] Downloaded: ' + $file) } }"
+powershell -NoProfile -ExecutionPolicy Bypass -Command "& { $ErrorActionPreference='Stop'; $base='https://raw.githubusercontent.com/FireDragonSlayer/FireDragon-TOM-Modfix/main/programs'; $files=@('check_source_and_extract_to_output.py','rename_duplicate_mod_folders.py','validate_output_structure.py','flatten_single_nested_mod_folder.py','run_logging.py'); foreach ($file in $files) { Invoke-WebRequest -Uri ($base + '/' + $file) -OutFile (Join-Path '%PROGRAMS_FOLDER%' $file); Write-Host ('[OK] Downloaded: ' + $file) } }"
 if errorlevel 1 (
     echo [WARN] Tool refresh failed (offline or blocked). Keeping bundled versions.
 )

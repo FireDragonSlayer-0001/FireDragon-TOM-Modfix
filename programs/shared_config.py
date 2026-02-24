@@ -11,6 +11,8 @@ DEFAULT_CONFIG: dict[str, Any] = {
     "programs_folder": "programs",
     "main_script": "programs/check_source_and_extract_to_output.py",
     "flatten_script": "programs/flatten_single_nested_mod_folder.py",
+    "rename_script": "programs/rename_duplicate_mod_folders.py",
+    "validate_script": "programs/validate_output_structure.py",
     "auto_update_tools": False,
     "do_move": False,
     "overwrite_files": True,

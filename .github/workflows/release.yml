@@ -34,10 +34,11 @@ jobs:
 
           cp -r Source "$BUNDLE_ROOT/$APP_DIR/Source"
           cp -r Output "$BUNDLE_ROOT/$APP_DIR/Output"
+          cp -r Logs "$BUNDLE_ROOT/$APP_DIR/Logs"
           cp -r programs "$BUNDLE_ROOT/$APP_DIR/programs"
           cp Readme.txt Launch.bat Setup.bat config.json "$BUNDLE_ROOT/$APP_DIR/"
 
-          rm -f "$BUNDLE_ROOT/$APP_DIR/Source/.gitkeep" "$BUNDLE_ROOT/$APP_DIR/Output/.gitkeep"
+          rm -f "$BUNDLE_ROOT/$APP_DIR/Source/.gitkeep" "$BUNDLE_ROOT/$APP_DIR/Output/.gitkeep" "$BUNDLE_ROOT/$APP_DIR/Logs/.gitkeep"
 
           cd "$BUNDLE_ROOT"
           zip -r "../$ZIP_NAME" "$APP_DIR"

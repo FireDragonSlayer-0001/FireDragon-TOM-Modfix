@@ -14,6 +14,7 @@ import random
 import string
 from pathlib import Path
 
+from run_logging import ProgramLogger
 from shared_config import load_config, root_from_config
 
 MOD_PREFIX = "Mod_"
@@ -35,9 +36,11 @@ def unique_renamed_path(folder: Path) -> Path:
             return candidate
 
 
-def rename_duplicates_in_output(output_root: Path) -> int:
+def rename_duplicates_in_output(output_root: Path, logger: ProgramLogger) -> tuple[int, list[str], list[str]]:
     renamed = 0
     groups: dict[str, list[Path]] = {}
+    renamed_details: list[str] = []
+    duplicate_mod_names: list[str] = []
 
     mod_folders = [output_root, *output_root.rglob("*")]
     for child in mod_folders:
@@ -50,23 +53,40 @@ def rename_duplicates_in_output(output_root: Path) -> int:
             continue
 
         folders.sort(key=lambda p: str(p))
+        duplicate_mod_names.append(folders[0].name)
         for duplicate in folders[1:]:
             new_path = unique_renamed_path(duplicate)
             duplicate.rename(new_path)
-            print(f"[RENAME] {duplicate} -> {new_path.name}")
+            detail = f"{duplicate} -> {new_path.name}"
+            logger.detail(f"[RENAME] {detail}")
+            renamed_details.append(detail)
             renamed += 1
 
-    return renamed
+    return renamed, duplicate_mod_names, renamed_details
 
 
 def scan_output(output_root: Path) -> int:
+    logger = ProgramLogger("02_rename")
+
     if not output_root.exists() or not output_root.is_dir():
-        print(f"[ERROR] output root does not exist or is not a folder: {output_root}")
+        logger.detail(f"[ERROR] output root does not exist or is not a folder: {output_root}")
+        logger.main_summary("failed: output root missing/invalid")
         return 1
 
-    total_renamed = rename_duplicates_in_output(output_root)
+    total_renamed, duplicate_mod_names, renamed_details = rename_duplicates_in_output(output_root, logger)
 
-    print(f"\n=== DONE ===\nTotal renamed folders: {total_renamed}")
+    logger.detail("\n=== DONE ===")
+    logger.detail(f"Total renamed folders: {total_renamed}")
+    logger.main_summary(
+        f"duplicate_groups={len(duplicate_mod_names)}, renamed={total_renamed}"
+    )
+    logger.detail_summary(
+        "Duplicate rename outcome",
+        {
+            "Duplicate mod groups found": duplicate_mod_names,
+            "Renamed duplicate folders": renamed_details,
+        },
+    )
     return 0
 
 
