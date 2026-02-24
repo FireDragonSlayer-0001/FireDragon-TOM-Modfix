@@ -79,7 +79,7 @@ def main() -> int:
         output_root = args.output_root
     else:
         config = load_config(args.config)
-        output_root = root_from_config(args.config) / config.get("output_folder", "Output")
+        output_root = root_from_config(args.config) / config.get("shippable_output_dir", config.get("output_folder", "Output"))
     return validate_output(output_root)
 
 

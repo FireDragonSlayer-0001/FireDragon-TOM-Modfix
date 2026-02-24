@@ -30,7 +30,7 @@ if not exist "config.json" (
 )
 
 for /f "usebackq tokens=*" %%I in (`%PYTHON_CMD% -c "import json; c=json.load(open('config.json','r',encoding='utf-8')); print(c.get('source_folder','Source'))"`) do set "SOURCE_FOLDER=%%I"
-for /f "usebackq tokens=*" %%I in (`%PYTHON_CMD% -c "import json; c=json.load(open('config.json','r',encoding='utf-8')); print(c.get('output_folder','Output'))"`) do set "OUTPUT_FOLDER=%%I"
+for /f "usebackq tokens=*" %%I in (`%PYTHON_CMD% -c "import json; c=json.load(open('config.json','r',encoding='utf-8')); print(c.get('shippable_output_dir', c.get('output_folder','Output')))"`) do set "OUTPUT_FOLDER=%%I"
 for /f "usebackq tokens=*" %%I in (`%PYTHON_CMD% -c "import json; c=json.load(open('config.json','r',encoding='utf-8')); print(c.get('main_script','programs/check_source_and_extract_to_output.py'))"`) do set "MAIN_SCRIPT=%%I"
 for /f "usebackq tokens=*" %%I in (`%PYTHON_CMD% -c "import json; c=json.load(open('config.json','r',encoding='utf-8')); print(c.get('flatten_script','programs/flatten_single_nested_mod_folder.py'))"`) do set "FLATTEN_SCRIPT=%%I"
 for /f "usebackq tokens=*" %%I in (`%PYTHON_CMD% -c "import json; c=json.load(open('config.json','r',encoding='utf-8')); print(c.get('rename_script','programs/rename_duplicate_mod_folders.py'))"`) do set "RENAME_SCRIPT=%%I"
