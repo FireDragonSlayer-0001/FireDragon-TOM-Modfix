@@ -10,6 +10,7 @@ DEFAULT_CONFIG: dict[str, Any] = {
     "output_folder": "Output",
     "programs_folder": "programs",
     "main_script": "programs/check_source_and_extract_to_output.py",
+    "flatten_script": "programs/flatten_single_nested_mod_folder.py",
     "auto_update_tools": False,
     "do_move": False,
     "overwrite_files": True,

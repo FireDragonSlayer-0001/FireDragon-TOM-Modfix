@@ -32,10 +32,12 @@ if not exist "config.json" (
 for /f "usebackq tokens=*" %%I in (`%PYTHON_CMD% -c "import json; c=json.load(open('config.json','r',encoding='utf-8')); print(c.get('source_folder','Source'))"`) do set "SOURCE_FOLDER=%%I"
 for /f "usebackq tokens=*" %%I in (`%PYTHON_CMD% -c "import json; c=json.load(open('config.json','r',encoding='utf-8')); print(c.get('output_folder','Output'))"`) do set "OUTPUT_FOLDER=%%I"
 for /f "usebackq tokens=*" %%I in (`%PYTHON_CMD% -c "import json; c=json.load(open('config.json','r',encoding='utf-8')); print(c.get('main_script','programs/check_source_and_extract_to_output.py'))"`) do set "MAIN_SCRIPT=%%I"
+for /f "usebackq tokens=*" %%I in (`%PYTHON_CMD% -c "import json; c=json.load(open('config.json','r',encoding='utf-8')); print(c.get('flatten_script','programs/flatten_single_nested_mod_folder.py'))"`) do set "FLATTEN_SCRIPT=%%I"
 
 if "%SOURCE_FOLDER%"=="" set "SOURCE_FOLDER=Source"
 if "%OUTPUT_FOLDER%"=="" set "OUTPUT_FOLDER=Output"
 if "%MAIN_SCRIPT%"=="" set "MAIN_SCRIPT=programs/check_source_and_extract_to_output.py"
+if "%FLATTEN_SCRIPT%"=="" set "FLATTEN_SCRIPT=programs/flatten_single_nested_mod_folder.py"
 
 if not exist "%MAIN_SCRIPT%" (
     echo [ERROR] Main script not found: %MAIN_SCRIPT%
@@ -58,6 +60,18 @@ if errorlevel 1 (
     echo [ERROR] Mod-fix workflow failed.
     pause
     exit /b 1
+)
+
+if exist "%FLATTEN_SCRIPT%" (
+    echo [RUN ] %PYTHON_CMD% "%FLATTEN_SCRIPT%"
+    %PYTHON_CMD% "%FLATTEN_SCRIPT%" "%OUTPUT_FOLDER%"
+    if errorlevel 1 (
+        echo [ERROR] Flatten workflow failed.
+        pause
+        exit /b 1
+    )
+) else (
+    echo [WARN] Flatten script not found, skipping: %FLATTEN_SCRIPT%
 )
 
 echo [DONE] Fixed mods are available in "%OUTPUT_FOLDER%".

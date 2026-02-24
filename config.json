@@ -3,6 +3,7 @@
   "output_folder": "Output",
   "programs_folder": "programs",
   "main_script": "programs/check_source_and_extract_to_output.py",
+  "flatten_script": "programs/flatten_single_nested_mod_folder.py",
   "auto_update_tools": false,
   "do_move": false,
   "overwrite_files": true
