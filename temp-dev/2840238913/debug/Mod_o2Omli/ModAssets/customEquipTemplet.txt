@@ -1,0 +1,58 @@
+[
+  {
+    "name": "GRbv2Y_customEquipWeapon",
+    "equipClass": 0,
+    "id": 111111110,
+    "FA": "atk_1_20|atk_0_20|attrLifeSteal_2_5",
+    "UA": 0,
+  },
+  {
+    "name": "GRbv2Y_customEquipRelic",
+    "equipClass": 1,
+    "id": 111111111,
+    "FA": null,
+    "UA": -1,
+  },
+  {
+    "name": "GRbv2Y_customEquipAmulet",
+    "equipClass": 2,
+    "id": 111111112,
+    "FA": "atk_1_20|atk_0_20|fsp_0_3",
+    "UA": -1,
+  },
+  {
+    "name": "GRbv2Y_customEquipWings",
+    "equipClass": 3,
+    "id": 111111113,
+    "FA": "atk_1_20|atk_0_20|fsp_0_3",
+    "UA": -1,
+  },
+  {
+    "name": "GRbv2Y_customEquipBoots",
+    "equipClass": 4,
+    "id": 111111114,
+    "FA": "atk_1_20|atk_0_20|fsp_0_3",
+    "UA": -1,
+  },
+  {
+    "name": "GRbv2Y_customEquipPants",
+    "equipClass": 5,
+    "id": 111111115,
+    "FA": "atk_1_20|atk_0_20|fsp_0_3",
+    "UA": -1,
+  },
+  {
+    "name": "GRbv2Y_customEquipChest",
+    "equipClass": 6,
+    "id": 111111116,
+    "FA": "atk_1_20|atk_0_20|fsp_0_3",
+    "UA": -1,
+  },
+  {
+    "name": "GRbv2Y_customEquipHelmet",
+    "equipClass": 7,
+    "id": 111111117,
+    "FA": "atk_1_20|atk_0_20|fsp_0_3",
+    "UA": -1,
+  },
+]
