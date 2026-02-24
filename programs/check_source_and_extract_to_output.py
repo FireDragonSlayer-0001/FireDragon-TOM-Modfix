@@ -1,0 +1,130 @@
+"""Task 1:
+Check source mod folders, then extract/copy the correct contents into output.
+
+This script mirrors the root `First.py` flow but with command-line options so it can be
+used from the `programs` folder directly.
+"""
+
+from __future__ import annotations
+
+import argparse
+import shutil
+from pathlib import Path
+
+
+BUGGED_MARKERS = {"ModProject", "debug"}
+NESTED_PAYLOAD_FOLDER = "debug"
+
+
+def transfer_item(src: Path, dst: Path, do_move: bool, overwrite_files: bool) -> None:
+    if src.is_dir():
+        if do_move:
+            dst.mkdir(parents=True, exist_ok=True)
+            for child in src.iterdir():
+                transfer_item(child, dst / child.name, do_move=True, overwrite_files=overwrite_files)
+            try:
+                src.rmdir()
+            except OSError:
+                pass
+        else:
+            shutil.copytree(src, dst, dirs_exist_ok=True)
+        return
+
+    dst.parent.mkdir(parents=True, exist_ok=True)
+    if dst.exists():
+        if overwrite_files:
+            dst.unlink()
+        else:
+            print(f"  [SKIP] File exists: {dst}")
+            return
+
+    if do_move:
+        shutil.move(str(src), str(dst))
+    else:
+        shutil.copy2(src, dst)
+
+
+def transfer_contents(src_dir: Path, dst_dir: Path, do_move: bool, overwrite_files: bool) -> None:
+    dst_dir.mkdir(parents=True, exist_ok=True)
+    for item in src_dir.iterdir():
+        transfer_item(item, dst_dir / item.name, do_move, overwrite_files)
+
+
+def is_bugged_mod_folder(mod_folder: Path) -> bool:
+    names = {p.name for p in mod_folder.iterdir() if p.is_dir()}
+    return BUGGED_MARKERS.issubset(names)
+
+
+def run(source_root: Path, output_root: Path, do_move: bool, overwrite_files: bool) -> int:
+    if not source_root.exists() or not source_root.is_dir():
+        print(f"[ERROR] source root does not exist or is not a folder: {source_root}")
+        return 1
+
+    output_root.mkdir(parents=True, exist_ok=True)
+
+    total = 0
+    fixed = 0
+    normal = 0
+    skipped = 0
+
+    for mod_folder in source_root.iterdir():
+        if not mod_folder.is_dir():
+            continue
+
+        total += 1
+        out_mod_folder = output_root / mod_folder.name
+        out_mod_folder.mkdir(parents=True, exist_ok=True)
+
+        try:
+            if is_bugged_mod_folder(mod_folder):
+                nested = mod_folder / NESTED_PAYLOAD_FOLDER
+                if nested.exists() and nested.is_dir():
+                    print(f"[FIX ] {mod_folder.name} -> extracting contents of '{NESTED_PAYLOAD_FOLDER}'")
+                    transfer_contents(nested, out_mod_folder, do_move, overwrite_files)
+                    fixed += 1
+                else:
+                    print(f"[WARN] {mod_folder.name} has bug markers but missing '{NESTED_PAYLOAD_FOLDER}'")
+                    skipped += 1
+            else:
+                print(f"[COPY] {mod_folder.name} -> already normal (or not matching bug markers)")
+                transfer_contents(mod_folder, out_mod_folder, do_move, overwrite_files)
+                normal += 1
+        except Exception as exc:
+            print(f"[ERR ] {mod_folder.name}: {exc}")
+            skipped += 1
+
+    mode = "MOVE" if do_move else "COPY"
+    print("\n=== DONE ===")
+    print(f"Mode: {mode}")
+    print(f"Total mod folders: {total}")
+    print(f"Fixed bugged folders: {fixed}")
+    print(f"Normal copied folders: {normal}")
+    print(f"Skipped/errors: {skipped}")
+    return 0
+
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="Check source mod folders and extract/copy into output.")
+    parser.add_argument("source_root", type=Path, help="Path to source mod folder.")
+    parser.add_argument("output_root", type=Path, help="Path to output mod folder.")
+    parser.add_argument("--move", action="store_true", help="Move files instead of copying.")
+    parser.add_argument(
+        "--no-overwrite",
+        action="store_true",
+        help="Do not overwrite files if they already exist in output.",
+    )
+    return parser.parse_args()
+
+
+def main() -> int:
+    args = parse_args()
+    return run(
+        source_root=args.source_root,
+        output_root=args.output_root,
+        do_move=args.move,
+        overwrite_files=not args.no_overwrite,
+    )
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

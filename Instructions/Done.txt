@@ -1,1 +1,2 @@
 - Added a mandatory agent requirement in `AGENTS.md` instructing all agents/Codex to append each major change to `Instructions/Done.txt` as an append-only log.
+- Added three scripts in `programs/` for source extraction, duplicate `Mod_` folder renaming with random 5-char suffix, and output structure validation.
