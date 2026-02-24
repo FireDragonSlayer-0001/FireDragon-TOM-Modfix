@@ -12,3 +12,4 @@
 - Corrected duplicate Mod_ rename logic to compare exact suffixes after `Mod_` across output and rename duplicates by replacing that suffix with a new random 5-character alnum value.
 - Added a semantic-version tag workflow that packages the portable setup as a versioned zip and automatically publishes GitHub Releases.
 - Updated the release workflow triggers so CI runs on branch pushes/PRs/manual dispatch and only publishes GitHub Releases for semantic version tags (v*.*.*).
+- Updated release workflow to publish only via manual dispatch by the repository owner using a required release_tag input.
