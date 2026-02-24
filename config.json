@@ -1,0 +1,9 @@
+{
+  "source_folder": "Source",
+  "output_folder": "Output",
+  "programs_folder": "programs",
+  "main_script": "programs/check_source_and_extract_to_output.py",
+  "auto_update_tools": false,
+  "do_move": false,
+  "overwrite_files": true
+}

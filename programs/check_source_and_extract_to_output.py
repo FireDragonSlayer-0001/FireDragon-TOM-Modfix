@@ -11,6 +11,8 @@ import argparse
 import shutil
 from pathlib import Path
 
+from shared_config import load_config, root_from_config
+
 
 BUGGED_MARKERS = {"ModProject", "debug"}
 NESTED_PAYLOAD_FOLDER = "debug"
@@ -105,24 +107,34 @@ def run(source_root: Path, output_root: Path, do_move: bool, overwrite_files: bo
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Check source mod folders and extract/copy into output.")
-    parser.add_argument("source_root", type=Path, help="Path to source mod folder.")
-    parser.add_argument("output_root", type=Path, help="Path to output mod folder.")
-    parser.add_argument("--move", action="store_true", help="Move files instead of copying.")
+    parser.add_argument("source_root", type=Path, nargs="?", help="Path to source mod folder.")
+    parser.add_argument("output_root", type=Path, nargs="?", help="Path to output mod folder.")
+    parser.add_argument("--config", type=Path, default=Path("config.json"), help="Path to shared config file.")
+    parser.add_argument("--move", action="store_true", help="Move files instead of copying (overrides config).")
     parser.add_argument(
         "--no-overwrite",
         action="store_true",
-        help="Do not overwrite files if they already exist in output.",
+        help="Do not overwrite files if they already exist in output (overrides config).",
     )
     return parser.parse_args()
 
 
 def main() -> int:
     args = parse_args()
+    config = load_config(args.config)
+    root = root_from_config(args.config)
+
+    source_root = args.source_root or (root / config.get("source_folder", "Source"))
+    output_root = args.output_root or (root / config.get("output_folder", "Output"))
+
+    do_move = args.move if args.move else bool(config.get("do_move", False))
+    overwrite_files = (not args.no_overwrite) and bool(config.get("overwrite_files", True))
+
     return run(
-        source_root=args.source_root,
-        output_root=args.output_root,
-        do_move=args.move,
-        overwrite_files=not args.no_overwrite,
+        source_root=source_root,
+        output_root=output_root,
+        do_move=do_move,
+        overwrite_files=overwrite_files,
     )
 
 

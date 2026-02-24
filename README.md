@@ -2,35 +2,40 @@
 
 FireDragonSlayer's Tale Of Immortal Mod structure fix.
 
-## Download `initilization.py`
+## Quick start (recommended)
 
-1. Open this repository on GitHub.
-2. Open the `initilization.py` file.
-3. Click **Raw** and save the file locally as `initilization.py`.
+1. Go to the repository **Releases** page.
+2. Download the latest setup zip (`FireDragon-TOM-Modfix-Setup.zip`).
+3. Extract the zip to any folder.
+4. Double-click `Setup.bat`.
+5. Put broken mods into `Source\`.
+6. Double-click `Launch.bat`.
+7. Get fixed mods from `Output\`.
 
-Direct raw URL:
-`https://raw.githubusercontent.com/FireDragonSlayer/FireDragon-TOM-Modfix/main/initilization.py`
+## Portable package contents
 
-## Install / Setup Steps
+The release zip already includes:
+- `Source\`
+- `Output\`
+- `programs\`
+- `Readme.txt`
+- `Launch.bat`
+- `Setup.bat`
+- `config.json`
 
-### Requirements
-- Python 3.8+ installed
-- Internet connection (preferred, used to download latest helper scripts)
+## Configuration
 
-### Setup
-1. Create or choose your working folder for the mod fix workflow.
-2. Put `initilization.py` inside that folder.
-3. Open terminal (or Command Prompt) in that folder.
-4. Run:
-   ```bash
-   python initilization.py
-   ```
-5. After setup finishes, the script creates:
-   - `Source/`
-   - `Output/`
-   - `programs/`
-   - `Setup.bat`
+Edit `config.json` to customize paths and behavior:
+- `source_folder`
+- `output_folder`
+- `programs_folder`
+- `main_script`
+- `auto_update_tools`
+- `do_move`
+- `overwrite_files`
 
-### Run the workflow
-- Windows: double-click `Setup.bat` and follow each confirmation prompt.
-- The batch flow explains each step and asks for input before it continues.
+All Python scripts in `programs\` read this same shared config.
+
+## Developer helper (optional)
+
+`initilization.py` can still scaffold this portable layout into your current directory when needed.
