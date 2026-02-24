@@ -78,7 +78,7 @@ goto :finish
 
 :update_tools
 echo [INFO] auto_update_tools enabled. Refreshing helper scripts from GitHub...
-powershell -NoProfile -ExecutionPolicy Bypass -Command "& { $ErrorActionPreference='Stop'; $base='https://raw.githubusercontent.com/FireDragonSlayer/FireDragon-TOM-Modfix/main/programs'; $files=@('check_source_and_extract_to_output.py','rename_duplicate_mod_folders.py','validate_output_structure.py','flatten_single_nested_mod_folder.py','run_logging.py'); foreach ($file in $files) { Invoke-WebRequest -Uri ($base + '/' + $file) -OutFile (Join-Path '%PROGRAMS_FOLDER%' $file); Write-Host ('[OK] Downloaded: ' + $file) } }"
+powershell -NoProfile -ExecutionPolicy Bypass -Command "& { $ErrorActionPreference='Stop'; $base='https://raw.githubusercontent.com/FireDragonSlayer-0001/FireDragon-TOM-Modfix/main/programs'; $files=@('check_source_and_extract_to_output.py','rename_duplicate_mod_folders.py','validate_output_structure.py','flatten_single_nested_mod_folder.py','run_logging.py'); foreach ($file in $files) { Invoke-WebRequest -Uri ($base + '/' + $file) -OutFile (Join-Path '%PROGRAMS_FOLDER%' $file); Write-Host ('[OK] Downloaded: ' + $file) } }"
 if errorlevel 1 (
     echo [WARN] Tool refresh failed (offline or blocked). Keeping bundled versions.
 )
