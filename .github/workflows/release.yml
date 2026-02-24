@@ -1,38 +1,46 @@
-name: Release Portable Setup
+name: Build and Publish Release
 
 on:
   push:
     tags:
-      - 'v*'
+      - 'v*.*.*'
 
 permissions:
   contents: write
 
 jobs:
-  build-release:
+  release:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Prepare release bundle
+      - name: Build portable release bundle
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
         run: |
           set -euo pipefail
-          BUNDLE_DIR="release-bundle/FireDragon-TOM-Modfix-Setup"
-          mkdir -p "$BUNDLE_DIR"
-          cp -r Source "$BUNDLE_DIR/Source"
-          cp -r Output "$BUNDLE_DIR/Output"
-          cp -r programs "$BUNDLE_DIR/programs"
-          cp Readme.txt Launch.bat Setup.bat config.json "$BUNDLE_DIR/"
 
-      - name: Create zip asset
-        run: |
-          set -euo pipefail
-          cd release-bundle
-          zip -r ../FireDragon-TOM-Modfix-Setup.zip FireDragon-TOM-Modfix-Setup
+          APP_DIR="FireDragon-TOM-Modfix-Setup"
+          BUNDLE_ROOT="release-bundle"
+          ZIP_NAME="FireDragon-TOM-Modfix-Setup-${RELEASE_TAG}.zip"
 
-      - name: Create GitHub release and upload asset
+          rm -rf "$BUNDLE_ROOT" "$ZIP_NAME"
+          mkdir -p "$BUNDLE_ROOT/$APP_DIR"
+
+          cp -r Source "$BUNDLE_ROOT/$APP_DIR/Source"
+          cp -r Output "$BUNDLE_ROOT/$APP_DIR/Output"
+          cp -r programs "$BUNDLE_ROOT/$APP_DIR/programs"
+          cp Readme.txt Launch.bat Setup.bat config.json "$BUNDLE_ROOT/$APP_DIR/"
+
+          cd "$BUNDLE_ROOT"
+          zip -r "../$ZIP_NAME" "$APP_DIR"
+
+      - name: Publish GitHub release
         uses: softprops/action-gh-release@v2
         with:
-          files: FireDragon-TOM-Modfix-Setup.zip
+          name: Release ${{ github.ref_name }}
+          generate_release_notes: true
+          make_latest: true
+          files: FireDragon-TOM-Modfix-Setup-${{ github.ref_name }}.zip
