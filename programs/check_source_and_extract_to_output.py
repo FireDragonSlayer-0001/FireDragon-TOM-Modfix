@@ -1,8 +1,8 @@
 """Task 1:
 Check source mod folders, then extract/copy the correct contents into output.
 
-This script mirrors the root `First.py` flow but with command-line options so it can be
-used from the `programs` folder directly.
+This script provides the main source-to-output extraction flow with command-line options
+so it can be used from the `programs` folder directly.
 """
 
 from __future__ import annotations
