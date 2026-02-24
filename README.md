@@ -36,6 +36,3 @@ Edit `config.json` to customize paths and behavior:
 
 All Python scripts in `programs\` read this same shared config.
 
-## Developer helper (optional)
-
-`initilization.py` can still scaffold this portable layout into your current directory when needed.

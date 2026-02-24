@@ -7,3 +7,4 @@
 - Overhauled setup flow: replaced Run Program.bat with interactive Setup.bat, updated initilization.py to create Additional folder, refresh helper scripts, and download README.md into README.txt.
 - Migrated project to pre-bundled portable release layout with shared config-driven Setup/Launch flows, config-aware Python scripts, and tag-triggered GitHub Release zip packaging workflow.
 - Updated .gitignore to ignore instructions/temp-dev folders and lowercase agents.md/readme.md files as requested.
+- Removed deprecated root scripts `First.py` and `initilization.py`, and updated docs/script comments to reflect programs/ as the active workflow.

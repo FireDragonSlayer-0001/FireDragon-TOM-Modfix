@@ -1,7 +1,7 @@
 """Task 3:
-Check whether output folder structure is proper based on root `First.py` expectations.
+Check whether output folder structure is proper after extraction.
 
-Rule used from `First.py`:
+Rule used by the extractor:
 - A folder is considered bugged when it contains BOTH `ModProject` and `debug` directories.
 In output, such a structure should generally not remain after extraction.
 """
