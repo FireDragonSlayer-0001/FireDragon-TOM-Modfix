@@ -17,6 +17,7 @@ from run_logging import ProgramLogger
 from shared_config import load_config, root_from_config
 
 MOD_PREFIX = "Mod_"
+MANUAL_FIXING_DIR_NAME = "Manual Fixing Required"
 
 
 def move_contents_up(nested_mod_folder: Path, parent_folder: Path) -> tuple[int, int]:
@@ -36,7 +37,41 @@ def move_contents_up(nested_mod_folder: Path, parent_folder: Path) -> tuple[int,
     return moved, skipped
 
 
-def flatten_output(output_root: Path) -> int:
+def has_double_mod_folders(children: list[Path]) -> bool:
+    mod_dirs = [child for child in children if child.is_dir() and child.name.startswith(MOD_PREFIX)]
+    unique_names = {child.name for child in mod_dirs}
+    return len(unique_names) >= 2
+
+
+def has_mod_folder_and_zip(children: list[Path]) -> bool:
+    has_mod_dir = any(child.is_dir() and child.name.startswith(MOD_PREFIX) for child in children)
+    has_zip_file = any(child.is_file() and child.suffix.lower() == ".zip" for child in children)
+    return has_mod_dir and has_zip_file
+
+
+def is_empty_folder(children: list[Path]) -> bool:
+    return len(children) == 0
+
+
+def move_to_manual_fixing(folder: Path, manual_fixing_root: Path, logger: ProgramLogger) -> Path:
+    manual_fixing_root.mkdir(parents=True, exist_ok=True)
+
+    target = manual_fixing_root / folder.name
+    if not target.exists():
+        shutil.move(str(folder), str(target))
+        return target
+
+    suffix = 1
+    while True:
+        candidate = manual_fixing_root / f"{folder.name}__manual_{suffix}"
+        if not candidate.exists():
+            shutil.move(str(folder), str(candidate))
+            logger.detail(f"  [WARN] Duplicate name in manual fixing folder, renamed to: {candidate.name}")
+            return candidate
+        suffix += 1
+
+
+def flatten_output(output_root: Path, manual_fixing_root: Path) -> int:
     logger = ProgramLogger("04_flatten")
 
     if not output_root.exists() or not output_root.is_dir():
@@ -46,11 +81,13 @@ def flatten_output(output_root: Path) -> int:
 
     checked = 0
     flattened = 0
+    moved_to_manual_fixing = 0
     moved_items = 0
     skipped_items = 0
 
     flattened_mods: list[str] = []
     skipped_mods: list[str] = []
+    manual_fixing_mods: list[str] = []
 
     for folder in output_root.iterdir():
         if not folder.is_dir():
@@ -58,6 +95,28 @@ def flatten_output(output_root: Path) -> int:
 
         checked += 1
         children = list(folder.iterdir())
+
+        if has_double_mod_folders(children):
+            logger.detail(f"[ERR ] {folder.name}: found multiple '{MOD_PREFIX}*' folders, moving to manual fixing")
+            moved_target = move_to_manual_fixing(folder, manual_fixing_root, logger)
+            moved_to_manual_fixing += 1
+            manual_fixing_mods.append(f"{folder.name} -> {moved_target.name}")
+            continue
+
+        if has_mod_folder_and_zip(children):
+            logger.detail(f"[ERR ] {folder.name}: found both '{MOD_PREFIX}*' folder and .zip file, moving to manual fixing")
+            moved_target = move_to_manual_fixing(folder, manual_fixing_root, logger)
+            moved_to_manual_fixing += 1
+            manual_fixing_mods.append(f"{folder.name} -> {moved_target.name}")
+            continue
+
+        if is_empty_folder(children):
+            logger.detail(f"[ERR ] {folder.name}: folder is empty, moving to manual fixing")
+            moved_target = move_to_manual_fixing(folder, manual_fixing_root, logger)
+            moved_to_manual_fixing += 1
+            manual_fixing_mods.append(f"{folder.name} -> {moved_target.name}")
+            continue
+
         if len(children) != 1:
             logger.detail(f"[SKIP] {folder.name}: expected exactly 1 child, found {len(children)}")
             skipped_mods.append(folder.name)
@@ -85,15 +144,24 @@ def flatten_output(output_root: Path) -> int:
     logger.detail("\n=== DONE ===")
     logger.detail(f"Checked folders: {checked}")
     logger.detail(f"Flattened folders: {flattened}")
+    logger.detail(f"Moved to manual fixing: {moved_to_manual_fixing}")
     logger.detail(f"Moved items: {moved_items}")
     logger.detail(f"Skipped items: {skipped_items}")
     logger.main_summary(
-        f"checked={checked}, flattened={flattened}, moved_items={moved_items}, skipped_items={skipped_items}"
+        "checked={checked}, flattened={flattened}, moved_to_manual_fixing={moved_to_manual_fixing}, "
+        "moved_items={moved_items}, skipped_items={skipped_items}".format(
+            checked=checked,
+            flattened=flattened,
+            moved_to_manual_fixing=moved_to_manual_fixing,
+            moved_items=moved_items,
+            skipped_items=skipped_items,
+        )
     )
     logger.detail_summary(
         "Per-mod flatten outcome",
         {
             "Flattened folders": flattened_mods,
+            "Moved to manual fixing": manual_fixing_mods,
             "Skipped/unchanged folders": skipped_mods,
         },
     )
@@ -111,12 +179,16 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> int:
     args = parse_args()
+    config = load_config(args.config)
+    root = root_from_config(args.config)
+
     if args.output_root is not None:
         output_root = args.output_root
     else:
-        config = load_config(args.config)
-        output_root = root_from_config(args.config) / config.get("shippable_output_dir", config.get("output_folder", "Output"))
-    return flatten_output(output_root)
+        output_root = root / config.get("shippable_output_dir", config.get("output_folder", "Output"))
+
+    manual_fixing_root = root / config.get("manual_fixing_required_dir", MANUAL_FIXING_DIR_NAME)
+    return flatten_output(output_root, manual_fixing_root)
 
 
 if __name__ == "__main__":

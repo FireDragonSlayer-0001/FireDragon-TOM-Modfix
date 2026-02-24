@@ -5,6 +5,7 @@ FireDragon TOM Modfix (Portable)
 3) Run Launch.bat to process normal Source -> Output flow.
 4) Collect fixed mods from Output (or your configured shippable_output_dir).
 5) Check run logs in the Logs folder (one main log + one detailed log per program).
+6) Check "Manual Fixing Required" for broken mods flagged as errors and fix those manually.
 
 Optional workflow (disabled by default):
 - Alternative Output is optional and disabled until enable_alternative_output=true in config.json.
@@ -17,4 +18,5 @@ Optional workflow (disabled by default):
 
 Configuration:
 - Edit config.json to change Source/Output/program paths and behavior.
+- If needed, set manual_fixing_required_dir to customize where error mods are moved.
 - Preferred normal output key: shippable_output_dir (legacy output_folder is still supported).

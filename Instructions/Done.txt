@@ -21,3 +21,5 @@ Added Logs release folder and implemented per-program + main run logging across 
 - Reordered Launch.bat workflow sequence to run flatten before rename (main -> flatten -> rename -> validate).
 - Added opt-in Alternative Output and safe replacement workflows with new config flags/paths, new launchers/scripts, setup/release packaging updates, and docs while preserving default Source->Output behavior.
 - Added two warning notices to README.md (including a red WARNING 1) about organized translation pack ordering and beta backup guidance for alternative config usage.
+Added manual-fixing error routing in flatten stage and introduced Manual Fixing Required folder/config + README guidance.
+- Added Manual Fixing Required handling docs/setup/config and flatten-stage error routing for double Mod_* folders, Mod_* + zip, and empty folders.
