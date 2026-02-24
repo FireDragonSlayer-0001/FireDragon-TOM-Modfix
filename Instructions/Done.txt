@@ -17,3 +17,4 @@
 - Updated Launch.bat/config defaults to run the flatten helper automatically after extraction so nested single Mod_* folders are pushed up into each output mod folder.
 - Updated release packaging workflow to remove Source/.gitkeep and Output/.gitkeep from generated setup zip bundles.
 Added Logs release folder and implemented per-program + main run logging across all 4 workflows.
+- Fixed Setup.bat auto-update GitHub raw URL to use the correct owner (FireDragonSlayer-0001) so helper script refresh no longer returns 404.
