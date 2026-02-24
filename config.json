@@ -17,5 +17,6 @@
   "enable_alternative_output": false,
   "enable_safe_replace": false,
   "replace_dry_run": true,
-  "replace_backup_enabled": false
+  "replace_backup_enabled": false,
+  "manual_fixing_required_dir": "Manual Fixing Required"
 }

@@ -18,6 +18,7 @@ DEFAULT_CONFIG: dict[str, Any] = {
     "validate_script": "programs/validate_output_structure.py",
     "alternative_builder_script": "programs/build_alternative_output_for_broken_mods.py",
     "safe_replace_script": "programs/safe_replace_from_alternative_output.py",
+    "manual_fixing_required_dir": "Manual Fixing Required",
     "auto_update_tools": False,
     "do_move": False,
     "overwrite_files": True,

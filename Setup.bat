@@ -35,19 +35,22 @@ for /f "usebackq tokens=*" %%I in (`%PYTHON_CMD% -c "import json; c=json.load(op
 for /f "usebackq tokens=*" %%I in (`%PYTHON_CMD% -c "import json; c=json.load(open('config.json','r',encoding='utf-8')); print(c.get('shippable_output_dir', c.get('output_folder','Output')))"`) do set "OUTPUT_FOLDER=%%I"
 for /f "usebackq tokens=*" %%I in (`%PYTHON_CMD% -c "import json; c=json.load(open('config.json','r',encoding='utf-8')); print(c.get('alternative_output_dir','Alternative Output'))"`) do set "ALTERNATIVE_OUTPUT_DIR=%%I"
 for /f "usebackq tokens=*" %%I in (`%PYTHON_CMD% -c "import json; c=json.load(open('config.json','r',encoding='utf-8')); print(c.get('programs_folder','programs'))"`) do set "PROGRAMS_FOLDER=%%I"
+for /f "usebackq tokens=*" %%I in (`%PYTHON_CMD% -c "import json; c=json.load(open('config.json','r',encoding='utf-8')); print(c.get('manual_fixing_required_dir','Manual Fixing Required'))"`) do set "MANUAL_FIXING_DIR=%%I"
 for /f "usebackq tokens=*" %%I in (`%PYTHON_CMD% -c "import json; c=json.load(open('config.json','r',encoding='utf-8')); print(c.get('auto_update_tools', False))"`) do set "AUTO_UPDATE_TOOLS=%%I"
 
 if "%SOURCE_FOLDER%"=="" set "SOURCE_FOLDER=Source"
 if "%OUTPUT_FOLDER%"=="" set "OUTPUT_FOLDER=Output"
 if "%ALTERNATIVE_OUTPUT_DIR%"=="" set "ALTERNATIVE_OUTPUT_DIR=Alternative Output"
 if "%PROGRAMS_FOLDER%"=="" set "PROGRAMS_FOLDER=programs"
+if "%MANUAL_FIXING_DIR%"=="" set "MANUAL_FIXING_DIR=Manual Fixing Required"
 
 echo [INFO] Source folder: %SOURCE_FOLDER%
 echo [INFO] Output folder: %OUTPUT_FOLDER%
 echo [INFO] Alternative output folder: %ALTERNATIVE_OUTPUT_DIR%
 echo [INFO] Programs folder: %PROGRAMS_FOLDER%
+echo [INFO] Manual fixing folder: %MANUAL_FIXING_DIR%
 
-for %%D in ("%SOURCE_FOLDER%" "%OUTPUT_FOLDER%" "%ALTERNATIVE_OUTPUT_DIR%" "%PROGRAMS_FOLDER%" "Logs") do (
+for %%D in ("%SOURCE_FOLDER%" "%OUTPUT_FOLDER%" "%ALTERNATIVE_OUTPUT_DIR%" "%PROGRAMS_FOLDER%" "%MANUAL_FIXING_DIR%" "Logs") do (
     if not exist %%~D (
         mkdir %%~D
         echo [FIX ] Created missing folder: %%~D

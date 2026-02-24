@@ -16,6 +16,7 @@ This tool is in BETA testing phase, make a backup of the mods that you have befo
 5. Put broken mods into `Source\`.
 6. Double-click `Launch.bat`.
 7. Get fixed mods from `Output\` (or your configured `shippable_output_dir`).
+8. Check `Manual Fixing Required\` (or your configured `manual_fixing_required_dir`) for error mods that require manual repair.
 
 ## Portable package contents
 
@@ -25,6 +26,7 @@ The release zip already includes:
 - `Alternative Output\`
 - `programs\`
 - `Logs\`
+- `Manual Fixing Required\`
 - `Readme.txt`
 - `Launch.bat`
 - `Launch_AlternativeOutput.bat`
@@ -47,6 +49,7 @@ Edit `config.json` to customize paths and behavior:
 - `validate_script`
 - `alternative_builder_script`
 - `safe_replace_script`
+- `manual_fixing_required_dir`
 - `auto_update_tools`
 - `do_move`
 - `overwrite_files`
@@ -62,6 +65,7 @@ All Python scripts in `programs\` read this same shared config.
 These features are **optional** and **disabled by default**.
 
 - `Launch.bat` remains the default normal flow (`Source -> Output`) and does not force alternative output/replacement.
+- After each run, always review `Manual Fixing Required\` and manually fix any mods that were moved there.
 - To build alternative output for only broken mods, enable `enable_alternative_output=true`, then run `Launch_AlternativeOutput.bat`.
 - To perform safe replacement, enable `enable_safe_replace=true`, set `replace_directory`, then run `Launch_Replace.bat`.
 
