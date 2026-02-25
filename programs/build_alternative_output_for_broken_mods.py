@@ -12,7 +12,7 @@ try:
         transfer_contents,
     )
     from run_logging import ProgramLogger
-    from shared_config import load_config, root_from_config
+    from shared_config import config_bool, load_config, root_from_config
 except ModuleNotFoundError:
     from programs.check_source_and_extract_to_output import (
         NESTED_PAYLOAD_FOLDER,
@@ -20,7 +20,7 @@ except ModuleNotFoundError:
         transfer_contents,
     )
     from programs.run_logging import ProgramLogger
-    from programs.shared_config import load_config, root_from_config
+    from programs.shared_config import config_bool, load_config, root_from_config
 
 
 def build(source_root: Path, alternative_output_root: Path, do_move: bool, overwrite_files: bool) -> int:
@@ -107,7 +107,7 @@ def main() -> int:
     config = load_config(args.config)
     root = root_from_config(args.config)
 
-    if not bool(config.get("enable_alternative_output", False)):
+    if not config_bool(config.get("enable_alternative_output", False), default=False):
         logger = ProgramLogger("05_alt_build")
         logger.detail("[INFO] Alternative output build is disabled by config (enable_alternative_output=false).")
         logger.main_summary("skipped: enable_alternative_output=false")
@@ -117,8 +117,8 @@ def main() -> int:
     alternative_output_root = args.alternative_output_root or (
         root / config.get("alternative_output_dir", "Alternative Output")
     )
-    do_move = bool(config.get("do_move", False))
-    overwrite_files = bool(config.get("overwrite_files", True))
+    do_move = config_bool(config.get("do_move", False), default=False)
+    overwrite_files = config_bool(config.get("overwrite_files", True), default=True)
 
     return build(source_root, alternative_output_root, do_move=do_move, overwrite_files=overwrite_files)
 

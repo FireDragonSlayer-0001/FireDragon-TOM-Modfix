@@ -27,3 +27,4 @@ Added manual-fixing error routing in flatten stage and introduced Manual Fixing 
 - Fixed release zip packaging to always include the Manual Fixing Required folder (including empty-folder cases) by explicitly creating and copying it in the GitHub Actions release bundle step.
 - Fixed config parsing to honor alternate key styles (e.g., Do_Move) by normalizing and mapping aliases to canonical keys, so Launch.bat-driven Python workflows correctly apply do_move and related flags.
 - Fixed config alias conflict resolution so when both canonical and alternate key forms exist (e.g., do_move + Do_Move), the later key in config.json takes precedence instead of being ignored.
+- Fixed boolean config parsing so string-valued toggles (including Do_Move/do_move) are interpreted correctly across extraction, alternative output, and safe replace flows; Do_Move=true now performs moves instead of copies.

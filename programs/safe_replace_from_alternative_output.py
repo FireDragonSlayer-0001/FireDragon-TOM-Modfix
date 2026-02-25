@@ -9,10 +9,10 @@ from pathlib import Path
 
 try:
     from run_logging import ProgramLogger
-    from shared_config import load_config, root_from_config
+    from shared_config import config_bool, load_config, root_from_config
 except ModuleNotFoundError:
     from programs.run_logging import ProgramLogger
-    from programs.shared_config import load_config, root_from_config
+    from programs.shared_config import config_bool, load_config, root_from_config
 
 
 def backup_target_folder(target_folder: Path, logger: ProgramLogger) -> Path:
@@ -124,7 +124,7 @@ def main() -> int:
     config = load_config(args.config)
     root = root_from_config(args.config)
 
-    if not bool(config.get("enable_safe_replace", False)):
+    if not config_bool(config.get("enable_safe_replace", False), default=False):
         logger = ProgramLogger("06_safe_replace")
         logger.detail("[INFO] Safe replace is disabled by config (enable_safe_replace=false).")
         logger.main_summary("skipped: enable_safe_replace=false")
@@ -148,8 +148,8 @@ def main() -> int:
         logger.main_summary("failed: replace_directory empty")
         return 1
 
-    dry_run = bool(config.get("replace_dry_run", True))
-    backup_enabled = bool(config.get("replace_backup_enabled", False))
+    dry_run = config_bool(config.get("replace_dry_run", True), default=True)
+    backup_enabled = config_bool(config.get("replace_backup_enabled", False), default=False)
 
     return safe_replace(
         alternative_output_dir=alternative_output_dir,
