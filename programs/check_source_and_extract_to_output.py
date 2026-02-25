@@ -12,7 +12,7 @@ import shutil
 from pathlib import Path
 
 from run_logging import ProgramLogger
-from shared_config import load_config, root_from_config
+from shared_config import config_bool, load_config, root_from_config
 
 
 BUGGED_MARKERS = {"ModProject", "debug"}
@@ -149,8 +149,8 @@ def main() -> int:
         root / config.get("shippable_output_dir", config.get("output_folder", "Output"))
     )
 
-    do_move = args.move if args.move else bool(config.get("do_move", False))
-    overwrite_files = (not args.no_overwrite) and bool(config.get("overwrite_files", True))
+    do_move = args.move if args.move else config_bool(config.get("do_move", False), default=False)
+    overwrite_files = (not args.no_overwrite) and config_bool(config.get("overwrite_files", True), default=True)
 
     return run(
         source_root=source_root,

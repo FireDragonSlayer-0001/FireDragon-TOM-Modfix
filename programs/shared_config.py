@@ -92,6 +92,28 @@ def _apply_back_compat(config: dict[str, Any]) -> None:
         config["output_folder"] = shippable
 
 
+def config_bool(value: Any, default: bool = False) -> bool:
+    """Parse config-like values into booleans.
+
+    Supports actual booleans, numbers, and common string forms like
+    "true"/"false", "yes"/"no", "on"/"off", and "1"/"0".
+    """
+
+    if value is None:
+        return default
+    if isinstance(value, bool):
+        return value
+    if isinstance(value, (int, float)):
+        return value != 0
+    if isinstance(value, str):
+        normalized = value.strip().lower()
+        if normalized in {"1", "true", "yes", "y", "on"}:
+            return True
+        if normalized in {"0", "false", "no", "n", "off", ""}:
+            return False
+    return bool(value)
+
+
 def load_config(config_path: Path | None = None) -> dict[str, Any]:
     if config_path is None:
         config_path = Path(__file__).resolve().parent.parent / "config.json"
