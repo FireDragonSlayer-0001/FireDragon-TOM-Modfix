@@ -59,15 +59,25 @@ def _normalize_key(key: str) -> str:
 
 
 def _normalize_config_keys(loaded: dict[str, Any]) -> dict[str, Any]:
-    normalized = dict(loaded)
+    """Return config with alias keys mapped to canonical keys.
+
+    Iteration keeps JSON insertion order, so if multiple keys map to the same
+    canonical key (e.g. ``do_move`` and ``Do_Move``), the last one in the file
+    wins.
+    """
+
+    normalized: dict[str, Any] = {}
 
     for key, value in loaded.items():
         if key in DEFAULT_CONFIG:
+            normalized[key] = value
             continue
 
         canonical = _CONFIG_KEY_ALIASES.get(_normalize_key(key))
-        if canonical and canonical not in loaded:
+        if canonical:
             normalized[canonical] = value
+        else:
+            normalized[key] = value
 
     return normalized
 
