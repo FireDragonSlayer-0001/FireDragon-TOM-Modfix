@@ -19,6 +19,19 @@ BUGGED_MARKERS = {"ModProject", "debug"}
 NESTED_PAYLOAD_FOLDER = "debug"
 
 
+def cleanup_source_mod_folder(mod_folder: Path, logger: ProgramLogger) -> None:
+    """Best-effort removal of a source mod folder after successful move-mode extraction."""
+
+    if not mod_folder.exists():
+        return
+
+    try:
+        shutil.rmtree(mod_folder)
+        logger.detail(f"[MOVE] Removed source folder after move: {mod_folder.name}")
+    except Exception as exc:
+        logger.detail(f"[WARN] Could not remove source folder '{mod_folder.name}' after move: {exc}")
+
+
 def transfer_item(src: Path, dst: Path, do_move: bool, overwrite_files: bool) -> None:
     if src.is_dir():
         if do_move:
@@ -90,6 +103,8 @@ def run(source_root: Path, output_root: Path, do_move: bool, overwrite_files: bo
                 if nested.exists() and nested.is_dir():
                     logger.detail(f"[FIX ] {mod_folder.name} -> extracting contents of '{NESTED_PAYLOAD_FOLDER}'")
                     transfer_contents(nested, out_mod_folder, do_move, overwrite_files)
+                    if do_move:
+                        cleanup_source_mod_folder(mod_folder, logger)
                     fixed += 1
                     fixed_mods.append(mod_folder.name)
                 else:
@@ -99,6 +114,8 @@ def run(source_root: Path, output_root: Path, do_move: bool, overwrite_files: bo
             else:
                 logger.detail(f"[COPY] {mod_folder.name} -> already normal (or not matching bug markers)")
                 transfer_contents(mod_folder, out_mod_folder, do_move, overwrite_files)
+                if do_move:
+                    cleanup_source_mod_folder(mod_folder, logger)
                 normal += 1
                 normal_mods.append(mod_folder.name)
         except Exception as exc:
