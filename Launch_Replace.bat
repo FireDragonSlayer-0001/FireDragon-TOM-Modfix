@@ -26,7 +26,7 @@ if not exist "config.json" (
     exit /b 1
 )
 
-for /f "usebackq tokens=*" %%I in (`%PYTHON_CMD% -c "import json; c=json.load(open('config.json','r',encoding='utf-8')); print(c.get('safe_replace_script','programs/safe_replace_from_alternative_output.py'))"`) do set "REPLACE_SCRIPT=%%I"
+for /f "usebackq tokens=*" %%I in (`%PYTHON_CMD% -c "import json; c=json.load(open('config.json','r',encoding='utf-8')); n=lambda s:''.join(ch for ch in s.lower() if ch.isalnum()); m={n(k):v for k,v in c.items()} if isinstance(c,dict) else {}; print(c.get('safe_replace_script', m.get('safereplacescript','programs/safe_replace_from_alternative_output.py')) if isinstance(c,dict) else 'programs/safe_replace_from_alternative_output.py')"`) do set "REPLACE_SCRIPT=%%I"
 if "%REPLACE_SCRIPT%"=="" set "REPLACE_SCRIPT=programs/safe_replace_from_alternative_output.py"
 
 for /f %%I in ('powershell -NoProfile -Command "Get-Date -Format yyyyMMdd-HHmmss"') do set "TOM_RUN_ID=%%I"
