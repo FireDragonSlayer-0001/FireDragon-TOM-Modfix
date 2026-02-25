@@ -28,6 +28,49 @@ DEFAULT_CONFIG: dict[str, Any] = {
     "replace_backup_enabled": False,
 }
 
+# Backward-compatible aliases for historical/alternate config key naming.
+# Keys are normalized by lowercasing and removing non-alphanumeric chars.
+_CONFIG_KEY_ALIASES: dict[str, str] = {
+    "sourcefolder": "source_folder",
+    "outputfolder": "output_folder",
+    "shippableoutputdir": "shippable_output_dir",
+    "alternativeoutputdir": "alternative_output_dir",
+    "replacedirectory": "replace_directory",
+    "programsfolder": "programs_folder",
+    "mainscript": "main_script",
+    "flattenscript": "flatten_script",
+    "renamescript": "rename_script",
+    "validatescript": "validate_script",
+    "alternativebuilderscript": "alternative_builder_script",
+    "safereplacescript": "safe_replace_script",
+    "manualfixingrequireddir": "manual_fixing_required_dir",
+    "autoupdatetools": "auto_update_tools",
+    "domove": "do_move",
+    "overwritefiles": "overwrite_files",
+    "enablealternativeoutput": "enable_alternative_output",
+    "enablesafereplace": "enable_safe_replace",
+    "replacedryrun": "replace_dry_run",
+    "replacebackupenabled": "replace_backup_enabled",
+}
+
+
+def _normalize_key(key: str) -> str:
+    return "".join(ch for ch in key.lower() if ch.isalnum())
+
+
+def _normalize_config_keys(loaded: dict[str, Any]) -> dict[str, Any]:
+    normalized = dict(loaded)
+
+    for key, value in loaded.items():
+        if key in DEFAULT_CONFIG:
+            continue
+
+        canonical = _CONFIG_KEY_ALIASES.get(_normalize_key(key))
+        if canonical and canonical not in loaded:
+            normalized[canonical] = value
+
+    return normalized
+
 
 def _apply_back_compat(config: dict[str, Any]) -> None:
     shippable = config.get("shippable_output_dir")
@@ -48,7 +91,7 @@ def load_config(config_path: Path | None = None) -> dict[str, Any]:
         with config_path.open("r", encoding="utf-8") as fh:
             loaded = json.load(fh)
             if isinstance(loaded, dict):
-                config.update(loaded)
+                config.update(_normalize_config_keys(loaded))
 
     _apply_back_compat(config)
     return config

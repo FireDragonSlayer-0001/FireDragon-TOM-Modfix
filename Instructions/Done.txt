@@ -25,3 +25,4 @@ Added manual-fixing error routing in flatten stage and introduced Manual Fixing 
 - Added Manual Fixing Required handling docs/setup/config and flatten-stage error routing for double Mod_* folders, Mod_* + zip, and empty folders.
 - Overhauled README configuration section to prioritize critical toggles/paths with plain-language explanations and moved base directory/script keys to a bottom advanced section.
 - Fixed release zip packaging to always include the Manual Fixing Required folder (including empty-folder cases) by explicitly creating and copying it in the GitHub Actions release bundle step.
+- Fixed config parsing to honor alternate key styles (e.g., Do_Move) by normalizing and mapping aliases to canonical keys, so Launch.bat-driven Python workflows correctly apply do_move and related flags.

@@ -63,6 +63,7 @@ Edit `config.json` to customize behavior and paths.
 
 - `do_move`  
   Controls whether extracted items are moved instead of copied during processing.
+  (Key names are normalized, so `Do_Move`/`do-move` variants are also accepted.)
 - `overwrite_files`  
   Allows overwriting existing files where workflows support it.
 - `auto_update_tools`  
