@@ -26,7 +26,7 @@ if not exist "config.json" (
     exit /b 1
 )
 
-for /f "usebackq tokens=*" %%I in (`%PYTHON_CMD% -c "import json; c=json.load(open('config.json','r',encoding='utf-8')); print(c.get('alternative_builder_script','programs/build_alternative_output_for_broken_mods.py'))"`) do set "ALT_SCRIPT=%%I"
+for /f "usebackq tokens=*" %%I in (`%PYTHON_CMD% -c "from pathlib import Path; from programs.shared_config import load_config; c=load_config(Path('config.json')); print(c.get('alternative_builder_script','programs/build_alternative_output_for_broken_mods.py'))"`) do set "ALT_SCRIPT=%%I"
 if "%ALT_SCRIPT%"=="" set "ALT_SCRIPT=programs/build_alternative_output_for_broken_mods.py"
 
 for /f %%I in ('powershell -NoProfile -Command "Get-Date -Format yyyyMMdd-HHmmss"') do set "TOM_RUN_ID=%%I"

@@ -31,12 +31,12 @@ if not errorlevel 1 (
 
 echo [OK] Python command: %PYTHON_CMD%
 
-for /f "usebackq tokens=*" %%I in (`%PYTHON_CMD% -c "import json; c=json.load(open('config.json','r',encoding='utf-8')); print(c.get('source_folder','Source'))"`) do set "SOURCE_FOLDER=%%I"
-for /f "usebackq tokens=*" %%I in (`%PYTHON_CMD% -c "import json; c=json.load(open('config.json','r',encoding='utf-8')); print(c.get('shippable_output_dir', c.get('output_folder','Output')))"`) do set "OUTPUT_FOLDER=%%I"
-for /f "usebackq tokens=*" %%I in (`%PYTHON_CMD% -c "import json; c=json.load(open('config.json','r',encoding='utf-8')); print(c.get('alternative_output_dir','Alternative Output'))"`) do set "ALTERNATIVE_OUTPUT_DIR=%%I"
-for /f "usebackq tokens=*" %%I in (`%PYTHON_CMD% -c "import json; c=json.load(open('config.json','r',encoding='utf-8')); print(c.get('programs_folder','programs'))"`) do set "PROGRAMS_FOLDER=%%I"
-for /f "usebackq tokens=*" %%I in (`%PYTHON_CMD% -c "import json; c=json.load(open('config.json','r',encoding='utf-8')); print(c.get('manual_fixing_required_dir','Manual Fixing Required'))"`) do set "MANUAL_FIXING_DIR=%%I"
-for /f "usebackq tokens=*" %%I in (`%PYTHON_CMD% -c "import json; c=json.load(open('config.json','r',encoding='utf-8')); print(c.get('auto_update_tools', False))"`) do set "AUTO_UPDATE_TOOLS=%%I"
+for /f "usebackq tokens=*" %%I in (`%PYTHON_CMD% -c "from pathlib import Path; from programs.shared_config import load_config; c=load_config(Path('config.json')); print(c.get('source_folder','Source'))"`) do set "SOURCE_FOLDER=%%I"
+for /f "usebackq tokens=*" %%I in (`%PYTHON_CMD% -c "from pathlib import Path; from programs.shared_config import load_config; c=load_config(Path('config.json')); print(c.get('shippable_output_dir', c.get('output_folder','Output')))"`) do set "OUTPUT_FOLDER=%%I"
+for /f "usebackq tokens=*" %%I in (`%PYTHON_CMD% -c "from pathlib import Path; from programs.shared_config import load_config; c=load_config(Path('config.json')); print(c.get('alternative_output_dir','Alternative Output'))"`) do set "ALTERNATIVE_OUTPUT_DIR=%%I"
+for /f "usebackq tokens=*" %%I in (`%PYTHON_CMD% -c "from pathlib import Path; from programs.shared_config import load_config; c=load_config(Path('config.json')); print(c.get('programs_folder','programs'))"`) do set "PROGRAMS_FOLDER=%%I"
+for /f "usebackq tokens=*" %%I in (`%PYTHON_CMD% -c "from pathlib import Path; from programs.shared_config import load_config; c=load_config(Path('config.json')); print(c.get('manual_fixing_required_dir','Manual Fixing Required'))"`) do set "MANUAL_FIXING_DIR=%%I"
+for /f "usebackq tokens=*" %%I in (`%PYTHON_CMD% -c "from pathlib import Path; from programs.shared_config import load_config, config_bool; c=load_config(Path('config.json')); print(config_bool(c.get('auto_update_tools', False), default=False))"`) do set "AUTO_UPDATE_TOOLS=%%I"
 
 if "%SOURCE_FOLDER%"=="" set "SOURCE_FOLDER=Source"
 if "%OUTPUT_FOLDER%"=="" set "OUTPUT_FOLDER=Output"
@@ -78,8 +78,6 @@ for %%P in ("check_source_and_extract_to_output.py" "rename_duplicate_mod_folder
 )
 
 if /I "%AUTO_UPDATE_TOOLS%"=="True" goto :update_tools
-if /I "%AUTO_UPDATE_TOOLS%"=="true" goto :update_tools
-if /I "%AUTO_UPDATE_TOOLS%"=="1" goto :update_tools
 goto :finish
 
 :update_tools
